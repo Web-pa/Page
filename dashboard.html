@@ -65,5 +65,36 @@
   </main>
 
   <script src="script.js"></script>
+
+<!-- Spending Chart Card -->
+<div class="card chart-card">
+  <h3>Spending Trends</h3>
+  <canvas id="spendingChart" width="400" height="200"></canvas>
+</div>
+
+<!-- Chart.js script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('spendingChart').getContext('2d');
+const spendingChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Spending ($)',
+            data: [500, 700, 400, 800, 600, 900],
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+    }
+});
+</script>
+  
 </body>
 </html>
