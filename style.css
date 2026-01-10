@@ -82,9 +82,16 @@ body {
   color: #fff;
 }
 
-.navbar .profile span {
-  font-weight: bold;
-  font-size: 16px;
+.navbar .profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar .profile .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .navbar button {
@@ -125,12 +132,40 @@ body {
   margin-bottom: 15px;
 }
 
+/* BALANCE CARD */
 .balance-card .balance {
   font-size: 28px;
   font-weight: bold;
   color: #005eb8;
 }
 
+.mini-cards {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.mini-card {
+  background-color: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+  width: 48%;
+  text-align: center;
+}
+
+.mini-card h4 {
+  font-size: 14px;
+  color: #555;
+}
+
+.mini-card p {
+  font-size: 16px;
+  font-weight: bold;
+  color: #005eb8;
+}
+
+/* TRANSACTIONS CARD */
 .transactions-card ul {
   list-style: none;
 }
@@ -142,6 +177,15 @@ body {
   border-bottom: 1px solid #eee;
 }
 
+.transactions-card li.income span:last-child {
+  color: green;
+}
+
+.transactions-card li.expense span:last-child {
+  color: red;
+}
+
+/* SEND MONEY CARD */
 .send-money-card input {
   width: 100%;
   padding: 10px;
@@ -163,6 +207,17 @@ body {
 
 .send-money-card button:hover {
   background-color: #0079d3;
+}
+
+/* CHART CARD */
+.chart-card .chart-placeholder {
+  height: 120px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #555;
 }
 
 /* RESPONSIVE */
