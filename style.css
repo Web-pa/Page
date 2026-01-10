@@ -271,3 +271,30 @@ canvas#spendingChart {
   color: #888;
   margin-top: 3px;
 }
+
+/* Forgot Username / Password Links */
+.login-links {
+  text-align: center;
+  margin: 10px 0 15px; /* space above and below */
+  font-size: 13px;
+}
+
+.login-links a {
+  color: #005eb8; /* Chase blue */
+  text-decoration: none;
+  margin: 0 5px;
+  transition: 0.3s;
+}
+
+.login-links a:hover {
+  text-decoration: underline; /* subtle hover effect */
+}
+
+/* Security Notice */
+.login-card small:last-of-type {
+  display: block;
+  color: #888; /* subtle gray */
+  font-size: 12px;
+  text-align: center;
+  margin-top: 5px;
+}
