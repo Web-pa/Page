@@ -3,15 +3,20 @@
 // Do NOT keep real credentials or transaction logic entirely in front-end code.
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Login
   const loginForm = document.getElementById("login-form");
-  const logoutBtn = document.getElementById("logout-btn");
-  const sendForm = document.getElementById("send-form");
-
   if (loginForm) loginForm.addEventListener("submit", handleLogin);
+
+  // Logout
+  const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) logoutBtn.addEventListener("click", handleLogout);
+
+  // Send Money
+  const sendForm = document.getElementById("send-money-form");
   if (sendForm) sendForm.addEventListener("submit", handleSendMoney);
 });
 
+// ===== Login handler =====
 function handleLogin(event) {
   event.preventDefault();
 
@@ -24,40 +29,33 @@ function handleLogin(event) {
     return;
   }
 
-  // Show loading message first
+  // Show loading message
   messageEl.style.color = "blue";
   messageEl.textContent = "Checking credentials...";
 
-  // Simulate server delay (e.g., 1.5 seconds)
+  // Simulate server delay
   setTimeout(() => {
     if (username === "John Williams" && password === "Password123") {
       messageEl.style.color = "green";
       messageEl.textContent = "Login successful! Redirecting...";
 
       setTimeout(() => {
-        window.location.href = "dashboard.html"; // redirect after a short pause
-      }, 1000); // 1 second delay before redirect
+        window.location.href = "dashboard.html";
+      }, 1000);
     } else {
       messageEl.style.color = "red";
       messageEl.textContent = "Invalid username or password.";
     }
-  }, 1500); // 1.5 seconds loading
+  }, 1500);
 }
 
-
+// ===== Logout handler =====
 function handleLogout(event) {
-  // If you use server-side sessions, call logout endpoint first (optional).
-  // Example:
-  // await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+  // Optional: call server logout endpoint
   window.location.href = "index.html";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const sendForm = document.getElementById("send-money-form");
-
-  if (sendForm) sendForm.addEventListener("submit", handleSendMoney);
-});
-
+// ===== Send Money handler =====
 function handleSendMoney(event) {
   event.preventDefault();
 
@@ -69,9 +67,10 @@ function handleSendMoney(event) {
   const msgEl = document.getElementById("send-message");
   const sendBtn = document.getElementById("send-btn");
 
-  // Reset previous message
+  // Hide previous message
   msgEl.style.display = "none";
 
+  // Validate fields
   if (!bank || !account || !recipient || !amount) {
     msgEl.textContent = "❌ Please fill all required fields!";
     msgEl.className = "message error";
