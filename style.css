@@ -298,3 +298,26 @@ canvas#spendingChart {
   text-align: center;
   margin-top: 5px;
 }
+
+.login-footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 12px;
+  color: #888;
+}
+
+.login-footer .footer-links a {
+  color: #005eb8;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.login-footer .footer-links a:hover {
+  text-decoration: underline;
+}
+
+.login-footer small {
+  display: block;
+  margin-top: 5px;
+  color: #888;
+}
