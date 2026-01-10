@@ -49,10 +49,16 @@
       </ul>
     </div>
 
-   <!-- Send Money -->
-  <div class="card send-money-card">
-  <h3>Send Money</h3>
-  <form id="send-money-form">
+   <!-- Send Money / Transfer Funds -->
+<div class="card send-money-card">
+  <h3>Transfer Funds</h3>
+  <!-- Toggle button -->
+  <button type="button" id="toggle-transfer-btn" class="button secondary">
+    Show Transfer Form
+  </button>
+
+  <!-- Hidden form -->
+  <form id="send-money-form" style="display:none; margin-top:15px;">
     <div class="form-group">
       <label for="bank">Select Bank</label>
       <select id="bank" required>
@@ -83,9 +89,6 @@
       <label for="note">Note (Optional)</label>
       <input type="text" id="note" placeholder="Add a note">
     </div>
-    
-    <!-- Inline message -->
-    <div id="send-message" class="message" style="display:none;"></div>
 
     <button type="submit" id="send-btn">Send Money</button>
   </form>
