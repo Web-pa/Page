@@ -439,3 +439,12 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
   height: 300px; /* adjust as needed */
   width: 100%;
 }
+
+.spending-trends-card {
+  height: 320px; /* or 400px */
+}
+
+.spending-trends-card canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
