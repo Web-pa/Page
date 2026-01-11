@@ -187,3 +187,29 @@ balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFr
   logoutBtn && logoutBtn.addEventListener("click", () => window.location.href = "index.html");
 
 });
+
+const toggleBtn = document.getElementById("toggle-balance");
+const sensitiveBalances = document.querySelectorAll(".sensitive");
+
+let visible = true;
+
+// store original values
+const originalValues = [];
+sensitiveBalances.forEach(el => {
+  originalValues.push(el.textContent);
+});
+
+toggleBtn.addEventListener("click", () => {
+  sensitiveBalances.forEach((el, index) => {
+    if (visible) {
+      el.textContent = "••••••";
+      el.classList.add("hidden");
+    } else {
+      el.textContent = originalValues[index];
+      el.classList.remove("hidden");
+    }
+  });
+
+  toggleBtn.textContent = visible ? "🙈" : "👁";
+  visible = !visible;
+});
