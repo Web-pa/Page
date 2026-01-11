@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!savedTransactions || savedTransactions.length === 0) {
   savedTransactions = [
     { type: "expense", text: "Netflix — Entertainment", amount: "$150", date: "2026-01-05" },
+    { type: "expense", text: "Salary — Deposit", amount: "$69000", date: "2026-01-09" },
   ];
   localStorage.setItem("transactions", JSON.stringify(savedTransactions));
 }
