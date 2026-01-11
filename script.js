@@ -143,95 +143,92 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Send Money Form Submission
   if (sendForm && balanceEl && transactionsList) {
-    const amountInput = document.getElementById("amount");
-    const recipientInput = document.getElementById("recipient");
-    const bankSelect = document.getElementById("bank");
-    const noteInput = document.getElementById("note");
-    const sendBtn = document.getElementById("send-btn");
+  const amountInput = document.getElementById("amount");
+  const recipientInput = document.getElementById("recipient");
+  const bankSelect = document.getElementById("bank");
+  const noteInput = document.getElementById("note");
+  const sendBtn = document.getElementById("send-btn");
 
-    sendForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+  sendForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      const amount = parseFloat(amountInput.value);
-      const recipient = recipientInput.value.trim();
-      const bank = bankSelect.value;
-      const note = noteInput.value.trim();
+    const amount = parseFloat(amountInput.value);
+    const recipient = recipientInput.value.trim();
+    const bank = bankSelect.value;
+    const note = noteInput.value.trim();
 
-      if (!bank || !recipient || isNaN(amount) || amount <= 0) {
-        alert("Please fill all required fields correctly.");
-        return;
-      }
-      if (amount > totalBalance) {
-        alert("Insufficient funds.");
-        return;
-      }
+    if (!bank || !recipient || isNaN(amount) || amount <= 0) {
+      alert("Please fill all required fields correctly.");
+      return;
+    }
+    if (amount > totalBalance) {
+      alert("Insufficient funds.");
+      return;
+    }
 
-      // Show PIN modal
-      pinModal.style.display = "flex";
-      const pinInput = document.getElementById("transferPin");
-      const pinMessage = document.getElementById("pinMessage");
-      pinInput.value = "";
-      pinMessage.textContent = "";
-      pinInput.focus();
+    // Show PIN modal only now
+    pinModal.style.display = "flex";
+    const pinInput = document.getElementById("transferPin");
+    const pinMessage = document.getElementById("pinMessage");
+    pinInput.value = "";
+    pinMessage.textContent = "";
+    pinInput.focus();
 
-      // Confirm PIN button
-      document.getElementById("confirmPinBtn").onclick = () => {
-        const enteredPin = pinInput.value.trim();
-        const correctPin = "2027"; // Hardcoded demo PIN
+    // Confirm PIN button
+    document.getElementById("confirmPinBtn").onclick = () => {
+      const enteredPin = pinInput.value.trim();
+      const correctPin = "2027"; // Change to whatever PIN you want
 
-        if (enteredPin === correctPin) {
-          pinModal.style.display = "none";
-
-          // Disable button + processing animation
-          sendBtn.disabled = true;
-          const originalText = sendBtn.textContent;
-          let dots = 0;
-          sendBtn.textContent = "Processing";
-          const loader = setInterval(() => {
-            dots = (dots + 1) % 4;
-            sendBtn.textContent = "Processing" + ".".repeat(dots);
-          }, 400);
-
-          setTimeout(() => {
-            clearInterval(loader);
-
-            // Update balance
-            totalBalance -= amount;
-            balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            // Add transaction
-            const li = document.createElement("li");
-            li.classList.add("expense");
-            li.innerHTML = `<span>Transfer to ${recipient} (${bank})${note ? " — " + note : ""}</span><span>-$${amount.toLocaleString()}</span>`;
-            transactionsList.insertBefore(li, transactionsList.firstChild);
-
-            // Save updated balance and transactions
-            savedTransactions.unshift({
-              type: "expense",
-              text: `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`,
-              amount: "-$" + amount.toLocaleString()
-            });
-            localStorage.setItem("totalBalance", totalBalance);
-            localStorage.setItem("transactions", JSON.stringify(savedTransactions));
-
-            alert(`Transfer of $${amount.toLocaleString()} to ${recipient}${note ? " — " + note : ""} successful ✔`);
-
-            sendForm.reset();
-            sendBtn.disabled = false;
-            sendBtn.textContent = originalText;
-          }, 2000);
-
-        } else {
-          pinMessage.textContent = "Incorrect PIN. Try again.";
-        }
-      };
-
-      // Cancel button
-      document.getElementById("cancelPinBtn").onclick = () => {
+      if (enteredPin === correctPin) {
         pinModal.style.display = "none";
-      };
-    });
-  }
+
+        // Proceed with transfer (balance, transaction, localStorage)
+        sendBtn.disabled = true;
+        const originalText = sendBtn.textContent;
+        let dots = 0;
+        sendBtn.textContent = "Processing";
+        const loader = setInterval(() => {
+          dots = (dots + 1) % 4;
+          sendBtn.textContent = "Processing" + ".".repeat(dots);
+        }, 400);
+
+        setTimeout(() => {
+          clearInterval(loader);
+
+          totalBalance -= amount;
+          balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+          const li = document.createElement("li");
+          li.classList.add("expense");
+          li.innerHTML = `<span>Transfer to ${recipient} (${bank})${note ? " — " + note : ""}</span><span>-$${amount.toLocaleString()}</span>`;
+          transactionsList.insertBefore(li, transactionsList.firstChild);
+
+          savedTransactions.unshift({
+            type: "expense",
+            text: `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`,
+            amount: "-$" + amount.toLocaleString()
+          });
+          localStorage.setItem("totalBalance", totalBalance);
+          localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+
+          alert(`Transfer of $${amount.toLocaleString()} to ${recipient}${note ? " — " + note : ""} successful ✔`);
+
+          sendForm.reset();
+          sendBtn.disabled = false;
+          sendBtn.textContent = originalText;
+        }, 2000);
+
+      } else {
+        pinMessage.textContent = "Incorrect PIN. Try again.";
+      }
+    };
+
+    // Cancel button
+    document.getElementById("cancelPinBtn").onclick = () => {
+      pinModal.style.display = "none";
+    };
+  });
+}
 
   // Logout Handler
   const logoutBtn = document.getElementById("logout-btn");
