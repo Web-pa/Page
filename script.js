@@ -243,26 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     visible = !visible;
   });
 
-  // ===== PROFILE PANEL =====
-  const profileBtn = document.getElementById("profile-btn");
-  const profilePanel = document.getElementById("profile-panel");
-  const closeProfileBtn = document.getElementById("close-profile");
-
-  if (profileBtn && profilePanel && closeProfileBtn) {
-    profileBtn.addEventListener("click", () => {
-      profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
-    });
-    closeProfileBtn.addEventListener("click", () => profilePanel.style.display = "none");
-    document.addEventListener("click", (e) => {
-      if (profilePanel.style.display === "block" && !profilePanel.contains(e.target) && !profileBtn.contains(e.target)) {
-        profilePanel.style.display = "none";
-      }
-    });
-  }
-
-});
-
-document.querySelectorAll(".quick-btn").forEach(btn => {
+   document.querySelectorAll(".quick-btn").forEach(btn => {
   btn.addEventListener("click", (e) => {
     const action = e.currentTarget.dataset.action;
 
@@ -283,4 +264,23 @@ document.querySelectorAll(".quick-btn").forEach(btn => {
       // implement your Request Money modal/form
     }
   });
+});
+   
+  // ===== PROFILE PANEL =====
+  const profileBtn = document.getElementById("profile-btn");
+  const profilePanel = document.getElementById("profile-panel");
+  const closeProfileBtn = document.getElementById("close-profile");
+
+  if (profileBtn && profilePanel && closeProfileBtn) {
+    profileBtn.addEventListener("click", () => {
+      profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
+    });
+    closeProfileBtn.addEventListener("click", () => profilePanel.style.display = "none");
+    document.addEventListener("click", (e) => {
+      if (profilePanel.style.display === "block" && !profilePanel.contains(e.target) && !profileBtn.contains(e.target)) {
+        profilePanel.style.display = "none";
+      }
+    });
+  }
+
 });
