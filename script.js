@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         el.classList.remove("hidden");
       }
     });
+  }
 
     // Toggle eye icon
     if (visible) {
