@@ -364,3 +364,73 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
 .hidden {
   letter-spacing: 4px;
 }
+
+/* Profile Panel */
+#profile-panel {
+  display: none;
+  position: fixed;
+  top: 60px; /* below navbar */
+  right: 20px;
+  width: 280px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border-radius: 12px;
+  z-index: 1001;
+  font-family: Arial, sans-serif;
+  transition: all 0.3s ease;
+}
+
+#profile-panel .profile-header {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+#profile-panel .avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+#profile-panel .profile-header h3 {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+#profile-panel .profile-header p {
+  font-size: 13px;
+  color: #777;
+}
+
+#profile-panel .profile-actions {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 15px;
+}
+
+#profile-panel .profile-actions button {
+  margin: 5px 0;
+  padding: 10px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+#profile-panel .profile-actions button:hover {
+  background: #0056b3;
+}
+
+#profile-panel .profile-actions #close-profile {
+  background: #ccc;
+  color: #333;
+}
+
+#profile-panel .profile-actions #close-profile:hover {
+  background: #999;
+}
