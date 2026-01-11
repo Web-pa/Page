@@ -96,74 +96,86 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Send Money Submission
   if (sendForm && balanceEl && transactionsList) {
-    const amountInput = document.getElementById("amount");
-    const recipientInput = document.getElementById("recipient");
-    const bankSelect = document.getElementById("bank");
-    const noteInput = document.getElementById("note");
-    const sendBtn = document.getElementById("send-btn");
+  const amountInput = document.getElementById("amount");
+  const recipientInput = document.getElementById("recipient");
+  const bankSelect = document.getElementById("bank");
+  const noteInput = document.getElementById("note");
+  const sendBtn = document.getElementById("send-btn");
+  const maxAttempts = 3; // max PIN tries
 
-    sendForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+  sendForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      const amount = parseFloat(amountInput.value);
-      const recipient = recipientInput.value.trim();
-      const bank = bankSelect.value;
-      const note = noteInput.value.trim();
+    const amount = parseFloat(amountInput.value);
+    const recipient = recipientInput.value.trim();
+    const bank = bankSelect.value;
+    const note = noteInput.value.trim();
 
-      if (!bank || !recipient || isNaN(amount) || amount <= 0) return alert("Fill all fields correctly.");
-      if (amount > totalBalance) return alert("Insufficient funds.");
+    if (!bank || !recipient || isNaN(amount) || amount <= 0) return alert("Fill all fields correctly.");
+    if (amount > totalBalance) return alert("Insufficient funds.");
 
-      // Show PIN modal
-      pinModal.style.display = "flex";
-      pinInput.value = "";
-      pinMessage.textContent = "";
-      pinInput.focus();
+    // Show PIN modal
+    pinModal.style.display = "flex";
+    pinInput.value = "";
+    pinMessage.textContent = "";
+    pinInput.focus();
+    let attemptsLeft = maxAttempts;
 
-      // Confirm button handler
-      confirmBtn.onclick = () => {
-        if (pinInput.value.trim() !== correctPin) {
-          pinMessage.textContent = "Incorrect PIN. Try again.";
-          return;
+    // Confirm button handler
+    confirmBtn.onclick = () => {
+      const enteredPin = pinInput.value.trim();
+      if (enteredPin !== correctPin) {
+        attemptsLeft--;
+        if (attemptsLeft > 0) {
+          pinMessage.textContent = `Incorrect PIN. ${attemptsLeft} attempt(s) remaining.`;
+          pinInput.value = "";
+          pinInput.focus();
+        } else {
+          pinMessage.textContent = "Maximum attempts reached. Try again later.";
+          setTimeout(() => pinModal.style.display = "none", 1000);
         }
+        return;
+      }
 
-        pinModal.style.display = "none";
-        sendBtn.disabled = true;
-        const originalText = sendBtn.textContent;
-        let dots = 0;
-        sendBtn.textContent = "Processing";
-        const loader = setInterval(() => {
-          dots = (dots + 1) % 4;
-          sendBtn.textContent = "Processing" + ".".repeat(dots);
-        }, 400);
+      // Correct PIN — proceed with transfer
+      pinModal.style.display = "none";
+      sendBtn.disabled = true;
+      const originalText = sendBtn.textContent;
+      let dots = 0;
+      sendBtn.textContent = "Processing";
+      const loader = setInterval(() => {
+        dots = (dots + 1) % 4;
+        sendBtn.textContent = "Processing" + ".".repeat(dots);
+      }, 400);
 
-        setTimeout(() => {
-          clearInterval(loader);
-          totalBalance -= amount;
-          balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      setTimeout(() => {
+        clearInterval(loader);
+        totalBalance -= amount;
+        balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-          const li = document.createElement("li");
-          li.classList.add("expense");
-          li.innerHTML = `<span>Transfer to ${recipient} (${bank})${note ? " — " + note : ""}</span><span>-$${amount.toLocaleString()}</span>`;
-          transactionsList.insertBefore(li, transactionsList.firstChild);
+        const li = document.createElement("li");
+        li.classList.add("expense");
+        li.innerHTML = `<span>Transfer to ${recipient} (${bank})${note ? " — " + note : ""}</span><span>-$${amount.toLocaleString()}</span>`;
+        transactionsList.insertBefore(li, transactionsList.firstChild);
 
-          savedTransactions.unshift({
-            type: "expense",
-            text: `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`,
-            amount: "-$" + amount.toLocaleString()
-          });
+        savedTransactions.unshift({
+          type: "expense",
+          text: `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`,
+          amount: "-$" + amount.toLocaleString()
+        });
 
-          localStorage.setItem("totalBalance", totalBalance);
-          localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+        localStorage.setItem("totalBalance", totalBalance);
+        localStorage.setItem("transactions", JSON.stringify(savedTransactions));
 
-          alert(`Transfer of $${amount.toLocaleString()} to ${recipient}${note ? " — " + note : ""} successful ✔`);
-          sendForm.reset();
-          sendBtn.disabled = false;
-          sendBtn.textContent = originalText;
-        }, 2000);
-      };
-    });
-  }
-
+        alert(`Transfer of $${amount.toLocaleString()} to ${recipient}${note ? " — " + note : ""} successful ✔`);
+        sendForm.reset();
+        sendBtn.disabled = false;
+        sendBtn.textContent = originalText;
+      }, 2000);
+    };
+  });
+}
+  
   // Logout
   const logoutBtn = document.getElementById("logout-btn");
   logoutBtn && logoutBtn.addEventListener("click", () => window.location.href = "index.html");
