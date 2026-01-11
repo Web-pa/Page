@@ -4,12 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   if (loginForm) {
     const messageEl = document.getElementById("login-message");
-
     loginForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const username = document.getElementById("username")?.value?.trim() || "";
       const password = document.getElementById("password")?.value || "";
-
       if (!username || !password) return alert("Please enter both username and password.");
 
       if (messageEl) {
@@ -46,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!totalBalance) {
     totalBalance = balanceEl ? parseFloat(balanceEl.textContent.replace(/[$,]/g, "")) : 0;
   }
-  balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (balanceEl) balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Transactions
   const savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
@@ -58,92 +56,66 @@ document.addEventListener("DOMContentLoaded", () => {
       transactionsList.insertBefore(li, transactionsList.firstChild);
     });
   }
-      // ===== MONTHLY SPENDING CHART =====
-const spendingCanvas = document.getElementById("spendingChart");
-if (spendingCanvas) {
+
+  // ===== MONTHLY SPENDING CHART (safe) =====
   try {
-    const ctx = spendingCanvas.getContext("2d");
+    const spendingCanvas = document.getElementById("spendingChart");
+    if (spendingCanvas) {
+      const ctx = spendingCanvas.getContext("2d");
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      let monthlyExpenses = Array(12).fill(0);
+      let monthlyIncome = Array(12).fill(0);
 
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    let monthlyExpenses = Array(12).fill(0);
-    let monthlyIncome = Array(12).fill(0);
+      savedTransactions.forEach(tx => {
+        try {
+          const today = new Date();
+          const txDate = tx.date ? new Date(tx.date) : today;
+          const monthIndex = txDate.getMonth();
 
-    savedTransactions.forEach(tx => {
-      const today = new Date();
-      const txDate = tx.date ? new Date(tx.date) : today;
-      const monthIndex = txDate.getMonth();
+          const expense = parseFloat(tx.amount.replace(/[-$,]/g,""));
+          if (tx.type === "expense" && !isNaN(expense)) monthlyExpenses[monthIndex] += expense;
 
-      const expense = parseFloat(tx.amount.replace(/[-$,]/g,""));
-      if (tx.type === "expense" && !isNaN(expense)) monthlyExpenses[monthIndex] += expense;
+          const income = parseFloat(tx.amount.replace(/[$,]/g,""));
+          if (tx.type === "income" && !isNaN(income)) monthlyIncome[monthIndex] += income;
+        } catch(e) {
+          console.warn("Skipping invalid transaction:", tx);
+        }
+      });
 
-      const income = parseFloat(tx.amount.replace(/[$,]/g,""));
-      if (tx.type === "income" && !isNaN(income)) monthlyIncome[monthIndex] += income;
-    });
-
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: months,
-        datasets: [
-          {
-            label: "Expenses",
-            data: monthlyExpenses,
-            backgroundColor: "rgba(217, 69, 69, 0.7)",
-            borderRadius: 6
-          },
-          {
-            label: "Income",
-            data: monthlyIncome,
-            backgroundColor: "rgba(26, 154, 58, 0.7)",
-            borderRadius: 6
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: "top" },
-          tooltip: { mode: "index", intersect: false }
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: months,
+          datasets: [
+            { label: "Expenses", data: monthlyExpenses, backgroundColor: "rgba(217, 69, 69, 0.7)", borderRadius: 6 },
+            { label: "Income", data: monthlyIncome, backgroundColor: "rgba(26, 154, 58, 0.7)", borderRadius: 6 }
+          ]
         },
-        scales: {
-          x: { stacked: false },
-          y: {
-            stacked: false,
-            beginAtZero: true,
-            ticks: {
-              callback: function(value){ return "$" + value.toLocaleString(); }
-            }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "top" }, tooltip: { mode: "index", intersect: false } },
+          scales: {
+            x: { stacked: false },
+            y: { stacked: false, beginAtZero: true, ticks: { callback: v => "$" + v.toLocaleString() } }
           }
         }
-      }
-    });
+      });
+    }
+  } catch(e) { console.error("Chart error:", e); }
 
-  } catch(e) {
-    console.error("Error rendering spending chart:", e);
-  }
-}
-
-  // Toggle Transfer Form
+  // ===== TOGGLE TRANSFER FORM =====
   if (toggleTransferBtn && sendForm) {
     toggleTransferBtn.addEventListener("click", () => {
-      if (sendForm.style.display === "none") {
-        sendForm.style.display = "block";
-        toggleTransferBtn.textContent = "Hide Transfer Form";
-      } else {
-        sendForm.style.display = "none";
-        toggleTransferBtn.textContent = "Transfer Funds";
-      }
+      sendForm.style.display = sendForm.style.display === "block" ? "none" : "block";
+      toggleTransferBtn.textContent = sendForm.style.display === "block" ? "Hide Transfer Form" : "Transfer Funds";
     });
   }
 
   // ===== PIN MODAL =====
   const pinModal = document.createElement("div");
   pinModal.id = "pinModal";
-  pinModal.style.cssText = `
-    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; font-family:Arial,sans-serif;
-  `;
+  pinModal.style.cssText = "display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;font-family:Arial,sans-serif;";
   pinModal.innerHTML = `
     <div style="background:#fff;padding:25px 30px;border-radius:15px;width:320px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
       <h3 style="margin-bottom:15px;color:#333;">Enter Transfer PIN</h3>
@@ -166,7 +138,7 @@ if (spendingCanvas) {
 
   cancelBtn.onclick = () => pinModal.style.display = "none";
 
-  // Send Money Submission
+  // ===== SEND MONEY =====
   if (sendForm && balanceEl && transactionsList) {
     const amountInput = document.getElementById("amount");
     const recipientInput = document.getElementById("recipient");
@@ -177,7 +149,6 @@ if (spendingCanvas) {
 
     sendForm.addEventListener("submit", (e) => {
       e.preventDefault();
-
       const amount = parseFloat(amountInput.value);
       const recipient = recipientInput.value.trim();
       const bank = bankSelect.value;
@@ -186,7 +157,6 @@ if (spendingCanvas) {
       if (!bank || !recipient || isNaN(amount) || amount <= 0) return alert("Fill all fields correctly.");
       if (amount > totalBalance) return alert("Insufficient funds.");
 
-      // Show PIN modal
       pinModal.style.display = "flex";
       pinInput.value = "";
       pinMessage.textContent = "";
@@ -208,7 +178,6 @@ if (spendingCanvas) {
           return;
         }
 
-        // Correct PIN
         pinModal.style.display = "none";
         sendBtn.disabled = true;
         const originalText = sendBtn.textContent;
@@ -249,7 +218,7 @@ if (spendingCanvas) {
 
   // ===== LOGOUT =====
   const logoutBtn = document.getElementById("logout-btn");
-  logoutBtn && logoutBtn.addEventListener("click", () => window.location.href = "index.html");
+  if (logoutBtn) logoutBtn.addEventListener("click", () => window.location.href = "index.html");
 
   // ===== BALANCE TOGGLE =====
   const balanceToggleBtn = document.getElementById("toggle-balance");
@@ -258,15 +227,10 @@ if (spendingCanvas) {
   const originalValues = [];
   sensitiveBalances.forEach(el => originalValues.push(el.textContent));
 
-  balanceToggleBtn && balanceToggleBtn.addEventListener("click", () => {
+  if (balanceToggleBtn) balanceToggleBtn.addEventListener("click", () => {
     sensitiveBalances.forEach((el, index) => {
-      if (visible) {
-        el.textContent = "••••••";
-        el.classList.add("hidden");
-      } else {
-        el.textContent = originalValues[index];
-        el.classList.remove("hidden");
-      }
+      el.textContent = visible ? "••••••" : originalValues[index];
+      el.classList.toggle("hidden", visible);
     });
     balanceToggleBtn.textContent = visible ? "👁‍🗨" : "👁";
     visible = !visible;
@@ -278,23 +242,12 @@ if (spendingCanvas) {
   const closeProfileBtn = document.getElementById("close-profile");
 
   if (profileBtn && profilePanel && closeProfileBtn) {
-    // Toggle panel
     profileBtn.addEventListener("click", () => {
       profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
     });
-
-    // Close button inside panel
-    closeProfileBtn.addEventListener("click", () => {
-      profilePanel.style.display = "none";
-    });
-
-    // Click outside to close
+    closeProfileBtn.addEventListener("click", () => profilePanel.style.display = "none");
     document.addEventListener("click", (e) => {
-      if (
-        profilePanel.style.display === "block" &&
-        !profilePanel.contains(e.target) &&
-        !profileBtn.contains(e.target)
-      ) {
+      if (profilePanel.style.display === "block" && !profilePanel.contains(e.target) && !profileBtn.contains(e.target)) {
         profilePanel.style.display = "none";
       }
     });
