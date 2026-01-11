@@ -61,14 +61,10 @@ if (toggleBalanceBtn && sensitiveBalances.length > 0 && eyeOpen && eyeClosed) {
     });
 
     // Toggle eye icon
-    if (visible) {
-      eyeOpen.style.display = "none";
-      eyeClosed.style.display = "block";
-    } else {
-      eyeOpen.style.display = "block";
-      eyeClosed.style.display = "none";
-    }
+    eyeOpen.style.display = visible ? "none" : "block";
+    eyeClosed.style.display = visible ? "block" : "none";
 
+    // Flip visibility state
     visible = !visible;
   });
 }
