@@ -285,6 +285,96 @@ document.getElementById('request-money-form').addEventListener('submit', e => {
 
 // Update transactions on page load
 updateTransactionsUI();
+
+  // ===== PAY BILL & REQUEST MONEY =====
+const payBillCard = document.querySelector(".pay-bill-card");
+const requestMoneyCard = document.querySelector(".request-money-card");
+
+// Toggle cards from Quick Actions
+document.querySelectorAll(".quick-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const action = btn.dataset.action;
+
+    if (action === "pay-bill") {
+      payBillCard.style.display = "block";
+      requestMoneyCard.style.display = "none";
+      payBillCard.scrollIntoView({ behavior: "smooth" });
+    }
+
+    if (action === "request-money") {
+      requestMoneyCard.style.display = "block";
+      payBillCard.style.display = "none";
+      requestMoneyCard.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+});
+
+  document.getElementById("pay-bill-form")?.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const biller = document.getElementById("biller").value;
+  const amount = parseFloat(document.getElementById("bill-amount").value);
+
+  if (!biller || isNaN(amount) || amount <= 0) {
+    alert("Enter valid bill details");
+    return;
+  }
+
+  if (amount > totalBalance) {
+    alert("Insufficient balance");
+    return;
+  }
+
+  totalBalance -= amount;
+  localStorage.setItem("totalBalance", totalBalance);
+  balanceEl.textContent = `$${totalBalance.toLocaleString()}`;
+
+  savedTransactions.unshift({
+    type: "expense",
+    text: `Bill Payment — ${biller}`,
+    amount: `-$${amount.toLocaleString()}`,
+    date: new Date().toISOString().split("T")[0]
+  });
+
+  localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+
+  const li = document.createElement("li");
+  li.className = "expense";
+  li.innerHTML = `<span>Bill Payment — ${biller}</span><span>-$${amount.toLocaleString()}</span>`;
+  transactionsList.insertBefore(li, transactionsList.firstChild);
+
+  alert("Bill paid successfully ✔");
+  e.target.reset();
+});
+
+  document.getElementById("request-money-form")?.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const name = document.getElementById("request-recipient").value.trim();
+  const amount = parseFloat(document.getElementById("request-amount").value);
+
+  if (!name || isNaN(amount) || amount <= 0) {
+    alert("Enter valid request");
+    return;
+  }
+
+  savedTransactions.unshift({
+    type: "income",
+    text: `Money Requested from ${name}`,
+    amount: `$${amount.toLocaleString()}`,
+    date: new Date().toISOString().split("T")[0]
+  });
+
+  localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+
+  const li = document.createElement("li");
+  li.className = "income";
+  li.innerHTML = `<span>Money Requested from ${name}</span><span>$${amount.toLocaleString()}</span>`;
+  transactionsList.insertBefore(li, transactionsList.firstChild);
+
+  alert("Money request sent ✔");
+  e.target.reset();
+});
   
   // ===== LOGOUT =====
   const logoutBtn = document.getElementById("logout-btn");
