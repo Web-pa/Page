@@ -369,7 +369,7 @@ const demoUser = {
   fullName: "Charles Williams",
   email: "Charlesweahh@gmail.com",
   phone: "+1 510 367 1796",
-  password: "1346852",
+  password: "1346000",
   emailNotif: true,
   smsNotif: false
 };
