@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     });
   }
-    // Quick buttons & cards
+    // ===== Quick buttons & cards =====
 const quickBtns = document.querySelectorAll('.quick-btn');
 const payBillCard = document.querySelector('.pay-bill-card');
 const requestMoneyCard = document.querySelector('.request-money-card');
@@ -222,37 +222,28 @@ const requestMoneyCard = document.querySelector('.request-money-card');
 // Hide forms initially
 if (payBillCard) payBillCard.style.display = 'none';
 if (requestMoneyCard) requestMoneyCard.style.display = 'none';
-if (sendForm) sendForm.style.display = 'none';
-     
-    quickBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
+
+quickBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
     const action = btn.dataset.action;
 
-    // Handle Send Money separately
-    if (action === 'send-money' && sendForm && toggleTransferBtn) {
-      // Scroll down to send money form and show it
-      sendForm.style.display = 'block';
-      toggleTransferBtn.textContent = "Hide Transfer Form";
-      sendForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-
-    // Toggle Pay Bill
-    if (action === 'pay-bill' && payBillCard) {
+    if (action === 'pay-bill') {
       payBillCard.style.display = payBillCard.style.display === 'block' ? 'none' : 'block';
       requestMoneyCard.style.display = 'none';
     }
 
-    // Toggle Request Money
-    if (action === 'request-money' && requestMoneyCard) {
+    if (action === 'request-money') {
       requestMoneyCard.style.display = requestMoneyCard.style.display === 'block' ? 'none' : 'block';
       payBillCard.style.display = 'none';
     }
 
-    // Hide Send Money if open
-    if (sendForm && action !== 'send-money') {
-      sendForm.style.display = 'none';
-      if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
+    if (action === 'send-money') {
+      sendForm.style.display = 'block';
+      toggleTransferBtn.textContent = "Hide Transfer Form";
+      sendForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // hide other cards
+      payBillCard.style.display = 'none';
+      requestMoneyCard.style.display = 'none';
     }
   });
 });
