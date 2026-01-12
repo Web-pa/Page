@@ -145,8 +145,23 @@
 
   // ===== Linked Accounts =====
   const linkedList = document.getElementById("linkedAccounts");
-  const linkedMsg = document.getElementById("linked-message");
+  let savedAccount = JSON.parse(localStorage.getItem("accountData"));
 
+if (savedAccount) {
+  demoAccount.linkedAccounts = savedAccount.linkedAccounts;
+}
+  function renderLinkedAccounts() {
+  linkedList.innerHTML = "";
+  demoAccount.linkedAccounts.forEach((acc, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${acc.bank} — **** **** ${acc.number} 
+      <button class="remove-btn" data-index="${index}">Remove</button>`;
+    linkedList.appendChild(li);
+  });
+  }
+  renderLinkedAccounts();
+  const linkedMsg = document.getElementById("linked-message");
+ 
   linkedList.addEventListener("click", e => {
     if (e.target.classList.contains("remove-btn")) {
       const li = e.target.parentElement;
