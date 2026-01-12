@@ -99,17 +99,19 @@
 
 <script>
   // ===== Demo Account Data =====
-  const demoAccount = {
-    accountNumber: "21908488433",
-    balance: 1500450.50,
-    dailyLimit: 40000,
-    linkedAccounts: [
-      { bank: "Bank of America", number: "5678" },
-      { bank: "Chase Bank", number: "9012" }
-    ],
-    txnEmailAlerts: true,
-    txnSMSAlerts: false
-  };
+  const defaultAccount = {
+  accountNumber: "21908488433",
+  balance: 1500450.50,
+  dailyLimit: 40000,
+  linkedAccounts: [
+    { bank: "Bank of America", number: "5678" },
+    { bank: "Chase Bank", number: "9012" }
+  ],
+  txnEmailAlerts: true,
+  txnSMSAlerts: false
+};
+
+  let demoAccount = JSON.parse(localStorage.getItem("accountData")) || defaultAccount;
 
   // ===== Populate Account Details =====
   const accountNumberEl = document.getElementById("accountNumber");
@@ -139,6 +141,7 @@
       return;
     }
     demoAccount.dailyLimit = newLimit;
+    localStorage.setItem("accountData", JSON.stringify(demoAccount));
     const msg = document.getElementById("limit-message");
     msg.textContent = `Daily limit updated to $${newLimit.toLocaleString()} ✔`;
     msg.className = "message success";
