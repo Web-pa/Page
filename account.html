@@ -121,7 +121,7 @@
     showAccount = !showAccount;
     accountNumberEl.textContent = showAccount 
       ? demoAccount.accountNumber.replace(/(\d{4})(?=\d)/g, "$1 ") 
-      : "**** **** 8488";
+      : "**** **** 1234";
     accountBalanceEl.textContent = showAccount 
       ? "$" + demoAccount.balance.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})
       : "$••••••";
