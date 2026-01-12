@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile Settings | Front Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .info-page { max-width: 500px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    h1 { margin-bottom: 15px; }
+    .form-group { margin-bottom: 15px; }
+    input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; }
+    button { padding: 10px 20px; border: none; border-radius: 6px; background: #007bff; color: #fff; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .toggle-switch { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .toggle-switch input { transform: scale(1.2); }
+    .message { margin-top: 10px; font-weight: 500; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+
+<script>
+  // Block access if not logged in
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "index.html";
+  }
+</script>
+
+<nav class="navbar">
+  <div class="profile">
+    <span>Front Page</span>
+  </div>
+  <a href="dashboard.html" class="logout-btn">Back to Dashboard</a>
+</nav>
+
+<main class="info-page">
+  <h1>Profile Settings</h1>
+
+  <!-- Basic Info -->
+  <section>
+    <h2>Basic Information</h2>
+    <form id="profile-form">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" required>
+      </div>
+      <button type="submit">Update Profile</button>
+      <p id="profile-message" class="message"></p>
+    </form>
+  </section>
+
+  <!-- Change Password -->
+  <section style="margin-top: 30px;">
+    <h2>Change Password</h2>
+    <form id="password-form">
+      <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" required>
+      </div>
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" required>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm New Password</label>
+        <input type="password" id="confirmPassword" required>
+      </div>
+      <button type="submit">Change Password</button>
+      <p id="password-message" class="message"></p>
+    </form>
+  </section>
+
+  <!-- Notification Preferences -->
+  <section style="margin-top: 30px;">
+    <h2>Notification Preferences</h2>
+    <div class="toggle-switch">
+      <input type="checkbox" id="emailNotif">
+      <label for="emailNotif">Email Notifications</label>
+    </div>
+    <div class="toggle-switch">
+      <input type="checkbox" id="smsNotif">
+      <label for="smsNotif">SMS Notifications</label>
+    </div>
+    <button id="savePrefsBtn">Save Preferences</button>
+    <p id="prefs-message" class="message"></p>
+  </section>
+
+  <section style="margin-top: 30px;">
+    <button id="logoutBtn" style="background:#dc3545;">Logout</button>
+  </section>
+</main>
+
+<footer class="login-footer">
+  <small>Demo project only. No real services provided.</small>
+</footer>
+
+<script>
+  // ===== Load demo user data =====
+  const demoUser = {
+    fullName: "John Williams",
+    email: "loganmoore7700@gmail.com",
+    phone: "+234 901 234 5678",
+    password: "1346799",
+    emailNotif: true,
+    smsNotif: false
+  };
+
+  // Populate form
+  const fullNameInput = document.getElementById("fullName");
+  const emailInput = document.getElementById("email");
+  const phoneInput = document.getElementById("phone");
+  const emailNotifInput = document.getElementById("emailNotif");
+  const smsNotifInput = document.getElementById("smsNotif");
+
+  fullNameInput.value = demoUser.fullName;
+  emailInput.value = demoUser.email;
+  phoneInput.value = demoUser.phone;
+  emailNotifInput.checked = demoUser.emailNotif;
+  smsNotifInput.checked = demoUser.smsNotif;
+
+  // ===== Profile Update =====
+  document.getElementById("profile-form").addEventListener("submit", e => {
+    e.preventDefault();
+    demoUser.fullName = fullNameInput.value.trim();
+    demoUser.email = emailInput.value.trim();
+    demoUser.phone = phoneInput.value.trim();
+
+    const msg = document.getElementById("profile-message");
+    msg.textContent = "Profile updated successfully ✔";
+    msg.className = "message success";
+  });
+
+  // ===== Change Password =====
+  document.getElementById("password-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const current = document.getElementById("currentPassword").value;
+    const newP = document.getElementById("newPassword").value;
+    const confirmP = document.getElementById("confirmPassword").value;
+    const msg = document.getElementById("password-message");
+
+    if (current !== demoUser.password) {
+      msg.textContent = "Current password is incorrect!";
+      msg.className = "message error";
+      return;
+    }
+    if (newP.length < 6) {
+      msg.textContent = "New password must be at least 6 characters!";
+      msg.className = "message error";
+      return;
+    }
+    if (newP !== confirmP) {
+      msg.textContent = "New passwords do not match!";
+      msg.className = "message error";
+      return;
+    }
+
+    demoUser.password = newP;
+    msg.textContent = "Password changed successfully ✔";
+    msg.className = "message success";
+    document.getElementById("password-form").reset();
+  });
+
+  // ===== Save Preferences =====
+  document.getElementById("savePrefsBtn").addEventListener("click", () => {
+    demoUser.emailNotif = emailNotifInput.checked;
+    demoUser.smsNotif = smsNotifInput.checked;
+    const msg = document.getElementById("prefs-message");
+    msg.textContent = "Preferences saved ✔";
+    msg.className = "message success";
+  });
+
+  // ===== Logout =====
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "index.html";
+  });
+</script>
+
+</body>
+</html>
