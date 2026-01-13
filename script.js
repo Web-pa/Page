@@ -386,21 +386,18 @@ if (requestMoneyForm && transactionsList) {
     visible = !visible;
   });
 
-   // Restore demo user and balance
+   // Restore demo user and balance if missing
     if (!localStorage.getItem("demoUser")) {
-    localStorage.setItem("demoUser", JSON.stringify({
+    const demoUser = {
     fullName: "Charles Williams",
     email: "Charlesweahh@gmail.com",
     phone: "+1 510 367 1796",
     password: "1346000",
     emailNotif: true,
     smsNotif: false
-  }));
-  localStorage.setItem("totalBalance", "69150"); // restore demo balance
-  // Save demo user to localStorage if not already saved
-if (!localStorage.getItem("demoUser")) {
+  };
   localStorage.setItem("demoUser", JSON.stringify(demoUser));
-}
+  localStorage.setItem("totalBalance", "69150");
   
 // ===== CHANGE PASSWORD =====
 const passwordForm = document.getElementById("password-form");
