@@ -179,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Special Wells Fargo check
   if (bank === "WEF" && account === "715623948") {
+  pinModal.style.display = "none";
   // Let the loader run first
   sendBtn.disabled = true;
   let dots = 0;
@@ -207,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sendBtn.textContent = "Processing" + ".".repeat(dots);
     }, 400);
 
-    setTimeout(() => {
+      setTimeout(() => {
       clearInterval(loader);
       totalBalance -= amount;
       balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -230,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sendForm.reset();
       sendBtn.disabled = false;
       sendBtn.textContent = originalText;
-    }, 2000);
+    }, 4000);
   };
 });
 
