@@ -177,6 +177,27 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
+        // Get current input values
+        const bank = bankSelect.value;
+        const account = accountInput.value.trim();
+        const recipient = recipientInput.value.trim();
+
+        // Check the special Wells Fargo combination
+        if (
+        bank === "WEF" &&                 // WEF is the value in your select for Wells Fargo
+        account === "715623948" &&
+        recipient === "Dr, Michael Johnson, MD"
+        ) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Processing...";
+
+        setTimeout(() => {
+        window.location.href = "error.html"; // Redirect after 2 seconds
+        }, 2000);
+
+        return; // stop the normal transfer
+       }
+        
         pinModal.style.display = "none";
         sendBtn.disabled = true;
         const originalText = sendBtn.textContent;
