@@ -1,1 +1,1 @@
-FRONT PAGE
+Frontpage
