@@ -163,6 +163,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ===== TOGGLE TRANSFER FORM =====
+  if (toggleTransferBtn && sendForm) {
+    toggleTransferBtn.addEventListener("click", () => {
+      sendForm.style.display = sendForm.style.display === "block" ? "none" : "block";
+      toggleTransferBtn.textContent = sendForm.style.display === "block" ? "Hide Transfer Form" : "Transfer Funds";
+    });
+}
+  
   // ===== PIN MODAL & SEND MONEY =====
   const pinModal = document.createElement("div");
   pinModal.id = "pinModal";
@@ -279,50 +287,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== QUICK BUTTONS =====
-  const quickBtns = document.querySelectorAll('.quick-btn');
-  const payBillCard = document.querySelector('.pay-bill-card');
-  const requestMoneyCard = document.querySelector('.request-money-card');
+  // ===== Quick buttons & cards =====
+const quickBtns = document.querySelectorAll('.quick-btn');
+const payBillCard = document.querySelector('.pay-bill-card');
+const requestMoneyCard = document.querySelector('.request-money-card');
 
-  if (payBillCard) payBillCard.style.display = 'none';
-  if (requestMoneyCard) requestMoneyCard.style.display = 'none';
+// Hide forms initially
+if (payBillCard) payBillCard.style.display = 'none';
+if (requestMoneyCard) requestMoneyCard.style.display = 'none';
 
-  quickBtns.forEach(btn => {
+quickBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const action = btn.dataset.action;
 
+    // Pay Bill button
     if (action === 'pay-bill') {
       payBillCard.style.display = payBillCard.style.display === 'block' ? 'none' : 'block';
       requestMoneyCard.style.display = 'none';
-      sendForm.style.display = 'none';
-      toggleTransferBtn.textContent = "Transfer Funds";
-      if (payBillCard.style.display === 'block') payBillCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // Scroll smoothly if now visible
+      if (payBillCard.style.display === 'block') {
+        payBillCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
 
+    // Request Money button
     if (action === 'request-money') {
       requestMoneyCard.style.display = requestMoneyCard.style.display === 'block' ? 'none' : 'block';
       payBillCard.style.display = 'none';
-      sendForm.style.display = 'none';
-      toggleTransferBtn.textContent = "Transfer Funds";
-      if (requestMoneyCard.style.display === 'block') requestMoneyCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // Scroll smoothly if now visible
+      if (requestMoneyCard.style.display === 'block') {
+        requestMoneyCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
 
+    // Send Money button
     if (action === 'send-money') {
-      if (sendForm.style.display === 'block') {
-        sendForm.style.display = 'none';
-        toggleTransferBtn.textContent = "Transfer Funds";
-      } else {
-        sendForm.style.display = 'block';
-        toggleTransferBtn.textContent = "Hide Transfer Form";
-        sendForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      sendForm.style.display = 'block';
+      toggleTransferBtn.textContent = "Hide Transfer Form";
+      sendForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // hide other cards
       payBillCard.style.display = 'none';
       requestMoneyCard.style.display = 'none';
     }
-
-  }); // end addEventListener
-}); // end forEach
-
+  });
+});
+  
   // ===== PAY BILL =====
   const payBillForm = document.getElementById("pay-bill-form");
   if (payBillForm && balanceEl && transactionsList) {
