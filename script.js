@@ -241,9 +241,14 @@ document.addEventListener("DOMContentLoaded", () => {
           let dots = 0;
           sendBtn.textContent = "Processing";
           const loader = setInterval(() => { dots = (dots + 1) % 4; sendBtn.textContent = "Processing" + ".".repeat(dots); }, 400);
-          setTimeout(() => { clearInterval(loader); sendForm.style.display = "none"; toggleTransferBtn.textContent = "Transfer Funds"; window.location.href = "error.html"; }, 4000);
-          return;
-        }
+          setTimeout(() => { 
+          clearInterval(loader); 
+          sendBtn.disabled = false;                // ✅ Re-enable the button
+          sendBtn.textContent = "Transfer Funds";  // ✅ Reset the text
+          sendForm.style.display = "none"; 
+          toggleTransferBtn.textContent = "Transfer Funds"; 
+          window.location.href = "error.html"; 
+        }, 4000);
 
         // Normal transfer
         pinModal.style.display = "none";
