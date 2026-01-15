@@ -204,14 +204,18 @@
 </div>
   
 <!-- Success Modal -->
-<div id="success-modal" class="success-modal" style="display:none;">
-  <div class="success-box">
-    <h3>Transfer Successful</h3>
-    <p>Your transaction was completed successfully✔.</p>
+<div id="success-modal" style="display:none;">
+  <div class="modal-content">
+    <span id="close-receipt">&times;</span>
+    <h2>Transaction Successful✔</h2>
+    <p>ID: <span id="r-id"></span></p>
+    <p>Recipient: <span id="r-name"></span></p>
+    <p>Amount: $<span id="r-amount"></span></p>
+    <p>Date: <span id="r-date"></span></p>
     <button id="download-receipt">Download Receipt</button>
-    <button id="close-receipt">Close</button>
   </div>
 </div>
+    
   
 <div id="receipt" style="display:none; padding:20px; font-family:Arial;">
   <h2>Front Page – Payment Receipt</h2>
