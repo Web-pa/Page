@@ -357,9 +357,9 @@
       });
     }
 
-    // ===== PIN CONFIRM =====
-if (confirmPinBtn) {
-  confirmPinBtn.addEventListener("click", () => {
+     // ===== PIN CONFIRM =====
+    if (confirmPinBtn) {
+    confirmPinBtn.addEventListener("click", () => {
     if (!transactionPinInput) return;
 
     // ===== PIN VALIDATION =====
@@ -375,7 +375,9 @@ if (confirmPinBtn) {
       return;
     }
 
-    // PIN correct: perform action
+    // PIN correct: hide PIN modal immediately
+    if (pinModal) pinModal.style.display = "none";
+
     if (!pendingTransaction) {
       if (pinMessage) pinMessage.textContent = "No pending transaction.";
       return;
@@ -383,13 +385,13 @@ if (confirmPinBtn) {
 
     const { action, details } = pendingTransaction;
 
-    // Button to show processing animation
+    // Determine which button triggers processing
     let targetBtn = null;
     if (action === "send") targetBtn = sendBtn;
     else if (action === "pay") targetBtn = payBillForm ? payBillForm.querySelector("button[type='submit']") : null;
     else if (action === "request") targetBtn = requestMoneyForm ? requestMoneyForm.querySelector("button[type='submit']") : null;
 
-    // Start 4-second processing animation
+    // Start processing animation
     if (targetBtn) {
       targetBtn.disabled = true;
       let dots = 0;
@@ -401,18 +403,25 @@ if (confirmPinBtn) {
       setTimeout(() => {
         clearInterval(loader);
         targetBtn.disabled = false;
+
+        // ===== PERFORM TRANSACTION =====
         if (action === "send") {
           const { bank, recipient, amount, note } = details;
-          processTransaction("expense", `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`, amount, "completed");
-          if (sendForm) { sendForm.reset(); sendForm.style.display = "none"; }
+          processTransaction(
+            "expense",
+            `Transfer to ${recipient} (${bank})${note ? " — " + note : ""}`,
+            amount,
+            "completed"
+          );
+          if (sendForm) sendForm.reset();
           if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
         } else if (action === "pay") {
           const { billText, billAmount } = details;
           processTransaction("expense", billText, billAmount, "completed");
-          if (payBillForm) { payBillForm.reset(); payBillForm.style.display = "none"; }
+          if (payBillForm) payBillForm.reset();
         } else if (action === "request") {
           const { recipient, amount } = details;
-          // Add pending transaction without changing balance
+          // Add pending transaction
           const txObj = {
             type: "income",
             text: `Money Requested from ${recipient}`,
@@ -423,22 +432,36 @@ if (confirmPinBtn) {
           savedTransactions.unshift(txObj);
           saveTransactionsAndBalance();
           if (transactionsList) renderTransactions();
-          if (requestMoneyForm) { requestMoneyForm.reset(); requestMoneyForm.style.display = "none"; }
+          if (requestMoneyForm) requestMoneyForm.reset();
+        }
 
-          // Show success modal with "Pending Transaction" label
-          const successModal = $("success-modal");
-          if (successModal) {
-            successModal.style.display = "flex";
-            const rid = $("r-id"); if (rid) rid.textContent = Math.floor(Math.random() * 1000000);
-            const rname = $("r-name"); if (rname) rname.textContent = `Pending: ${recipient}`;
-            const ramount = $("r-amount"); if (ramount) ramount.textContent = Number(amount).toFixed(2);
-            const rdate = $("r-date"); if (rdate) rdate.textContent = new Date().toLocaleDateString();
+        // ===== SHOW SUCCESS MODAL =====
+        const successModal = $("success-modal");
+        if (successModal) {
+          successModal.style.display = "flex";  // Centered and visible
+          successModal.style.position = "fixed";
+          successModal.style.top = "50%";
+          successModal.style.left = "50%";
+          successModal.style.transform = "translate(-50%, -50%)";
+          successModal.style.zIndex = 2000;
+
+          const rid = $("r-id"); if (rid) rid.textContent = Math.floor(Math.random() * 1000000);
+          const rname = $("r-name");
+          if (rname) rname.textContent = action === "request" ? `Pending: ${details.recipient}` : 
+            (action === "send" ? details.recipient : details.billText);
+          const ramount = $("r-amount");
+          if (ramount) ramount.textContent = Number(action === "request" ? details.amount : (details.amount || details.billAmount)).toFixed(2);
+          const rdate = $("r-date"); if (rdate) rdate.textContent = new Date().toLocaleDateString();
+
+          const modalHeading = successModal.querySelector("h2");
+          if (modalHeading) {
+            modalHeading.textContent = action === "request" ? "Transaction Pending ⏳" : "Transaction Successful ✔";
           }
         }
+
         pendingTransaction = null;
-        if (pinModal) pinModal.style.display = "none";
         resetPinState();
-      }, 4000);
+      }, 4000); // 4 seconds processing
     }
   });
 }
