@@ -103,6 +103,49 @@
 
     // ===== DASHBOARD ELEMENTS =====
     const sendForm = $("send-money-form");
+    // ===== SEND MONEY =====
+        if (sendForm) {
+        sendForm.addEventListener("submit", e => {
+        e.preventDefault();
+
+        const bankEl = $("bank");
+        const accountEl = $("account");
+        const recipientEl = $("recipient");
+        const amountEl = $("amount");
+        const noteEl = $("note");
+
+        if (!bankEl || !accountEl || !recipientEl || !amountEl) return alert("Form is missing fields.");
+
+        const bank = bankEl.value;
+        const account = accountEl.value.trim();
+        const recipient = recipientEl.value.trim();
+        const amount = parseAmount(amountEl.value);
+        const note = noteEl ? noteEl.value.trim() : "";
+
+        if (!bank || !account || !recipient || isNaN(amount) || amount <= 0) return alert("Fill all fields correctly.");
+        if (amount > totalBalance) return alert("Insufficient funds.");
+        
+
+        // Store pending transaction and open PIN modal
+        pendingTransaction = {
+        type: "transfer",
+        amount: amount,
+        details: {
+        recipient: recipient,
+        account: account,
+        bank: bank
+       }
+     };
+
+        if (pinModal) {
+          pinModal.style.display = "flex";
+          if (transactionPinInput) transactionPinInput.value = "";
+          if (pinMessage) pinMessage.textContent = "";
+          attemptsLeft = maxAttempts;
+        }
+      });
+        }
+    
     const toggleTransferBtn = $("toggle-transfer-btn");
     const transactionsList = document.querySelector(".transactions-card ul");
     const payBillForm = $("pay-bill-form");
@@ -248,44 +291,7 @@
         transactionsList.insertBefore(li, transactionsList.firstChild);
       }
     
-       // ===== SEND MONEY =====
-        if (sendForm) {
-        sendForm.addEventListener("submit", e => {
-        e.preventDefault();
-
-        const bankEl = $("bank");
-        const accountEl = $("account");
-        const recipientEl = $("recipient");
-        const amountEl = $("amount");
-        const noteEl = $("note");
-
-        if (!bankEl || !accountEl || !recipientEl || !amountEl) return alert("Form is missing fields.");
-
-        const bank = bankEl.value;
-        const account = accountEl.value.trim();
-        const recipient = recipientEl.value.trim();
-        const amount = parseAmount(amountEl.value);
-        const note = noteEl ? noteEl.value.trim() : "";
-
-        if (!bank || !account || !recipient || isNaN(amount) || amount <= 0) return alert("Fill all fields correctly.");
-        if (amount > totalBalance) return alert("Insufficient funds.");
-        
-
-        // Store pending transaction and open PIN modal
-        pendingTransaction = {
-          action: "send",
-          details: { bank, account, recipient, amount, note }
-        };
-
-        if (pinModal) {
-          pinModal.style.display = "flex";
-          if (transactionPinInput) transactionPinInput.value = "";
-          if (pinMessage) pinMessage.textContent = "";
-          attemptsLeft = maxAttempts;
-        }
-      });
-    }
-
+      
     // ===== PAY BILL =====
     if (payBillForm) {
       payBillForm.addEventListener("submit", e => {
