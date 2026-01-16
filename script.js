@@ -445,6 +445,10 @@
           const rname = $("r-name");
           if (rname) rname.textContent = action === "request" ? `Pending: ${details.recipient}` :
             (action === "send" ? details.recipient : details.billText);
+          const rRecipient = $("r-recipient");
+          if (rRecipient) rRecipient.textContent = action === "send"
+          ? `${details.recipient} — ${details.account}`
+          : "";
           const ramount = $("r-amount"); if (ramount) ramount.textContent = Number(action === "request" ? details.amount : (details.amount || details.billAmount)).toFixed(2);
           const rdate = $("r-date"); if (rdate) rdate.textContent = new Date().toLocaleDateString();
 
