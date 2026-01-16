@@ -601,23 +601,31 @@ if (cancelPinBtn) {
     // ===== PROFILE PANEL =====
     const profileBtn = $("profile-btn");
     const profilePanel = $("profile-panel");
+    const profileConnector = $("profile-connector");
     const closeProfileBtn = $("close-profile");
     const editProfileBtn = $("edit-profile");
     const accountSettingsBtn = $("account-settings");
 
     if (profileBtn && profilePanel) {
-      profileBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
-      });
+    profileBtn.addEventListener("click", e => {
+    e.stopPropagation();
+
+    const isOpen = profilePanel.style.display === "block";
+
+    profilePanel.style.display = isOpen ? "none" : "block";
+
+    if (profileConnector) {
+      profileConnector.style.display = isOpen ? "none" : "flex";
     }
+  });
+  }
 
     if (closeProfileBtn) closeProfileBtn.addEventListener("click", () => { if (profilePanel) profilePanel.style.display = "none"; });
 
     document.addEventListener("click", e => {
       if (profilePanel && profilePanel.style.display === "block" && !profilePanel.contains(e.target) && profileBtn && !profileBtn.contains(e.target)) {
         profilePanel.style.display = "none";
-      }
+      if (profileConnector) profileConnector.style.display = "none";
     });
 
     if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
