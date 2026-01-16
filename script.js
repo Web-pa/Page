@@ -249,22 +249,42 @@
       }
 
        // Show success modal if present  
-       const successModal = $("success-modal");  
-       if (status === "completed" && successModal) {  
-       successModal.style.display = "flex";  
-       const rid = $("r-id"); if (rid) rid.textContent = Math.floor(Math.random() * 1000000);  
-       const rname = $("r-name"); if (rname) rname.textContent = text;  
-       const rRecipient = $("r-recipient");  
-       if (rRecipient) rRecipient.textContent = `${details.recipient} — ${details.account}`;  
-       const ramount = $("r-amount"); if (ramount) ramount.textContent = Number(amtValue).toFixed(2);  
-       const rdate = $("r-date"); if (rdate) rdate.textContent = new Date().toLocaleDateString();  
-      }  
-     } 
+       const rRecipient = $("r-recipient");
+       if (rRecipient) {
+       if (pendingTransaction && pendingTransaction.details) {
+       const det = pendingTransaction.details;
+       rRecipient.textContent = det.account
+       ? `${det.recipient} — ${det.account}`
+       : det.recipient || "[Insert Beneficiary Name / Account Details]";
+      } else {
+       rRecipient.textContent = "[Insert Beneficiary Name / Account Details]";
+     }
+   }
+
+       const ramount = $("r-amount");
+       if (ramount) {
+       if (pendingTransaction && pendingTransaction.details) {
+       const det = pendingTransaction.details;
+       ramount.textContent = det.amount
+       ? Number(det.amount).toFixed(2)
+       : det.billAmount
+       ? Number(det.billAmount).toFixed(2)
+       : "0.00";
+      } else {
+       ramount.textContent = Number(amtValue).toFixed(2);
+      }
+    }
+
+        const rdate = $("r-date");
+        if (rdate) rdate.textContent = new Date().toLocaleDateString();
+
+        const rtime = $("r-time");
+        if (rtime) rtime.textContent = new Date().toLocaleTimeString("en-US", { hour12: false }) + " — UTC";
     
-      // ===== SEND MONEY =====
-      if (sendForm) {
-       sendForm.addEventListener("submit", e => {
-       e.preventDefault();
+       // ===== SEND MONEY =====
+        if (sendForm) {
+        sendForm.addEventListener("submit", e => {
+        e.preventDefault();
 
         const bankEl = $("bank");
         const accountEl = $("account");
@@ -551,11 +571,11 @@ if (cancelPinBtn) {
       $("r-time").textContent = `${hh}:${mm}:${ss} — UTC`;
     }
 
-    // Get all values from the receipt HTML
+    // Get all values from the modal (ensures filled correctly)
     const id = $("r-id") ? $("r-id").textContent : "TX" + Math.floor(100000 + Math.random() * 900000);
-    const ref = $("r-ref").textContent;
+    const ref = $("r-ref") ? $("r-ref").textContent : "REF" + Math.floor(100000000 + Math.random() * 900000000);
     const date = $("r-date") ? $("r-date").textContent : new Date().toLocaleDateString();
-    const time = $("r-time").textContent;
+    const time = $("r-time") ? $("r-time").textContent : new Date().toLocaleTimeString("en-US", { hour12: false }) + " — UTC";
     const amount = $("r-amount") ? $("r-amount").textContent : "0.00";
     const fee = $("r-fee") ? $("r-fee").textContent : "0.00";
     const recipient = $("r-recipient") ? $("r-recipient").textContent : "[Insert Beneficiary Name / Account Details]";
