@@ -576,7 +576,7 @@
         // PDF styling
         let y = 20; // vertical position start
         doc.setFontSize(18);
-        doc.text("Front Page – Payment Receipt", 105, y, { align: "center" });
+        doc.text("Chase Bank – Payment Receipt", 105, y, { align: "center" });
         y += 10;
         doc.setLineWidth(0.5);
         doc.line(20, y, 190, y);
