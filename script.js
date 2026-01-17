@@ -29,7 +29,7 @@
         fullName: "Charles Williams",
         email: "Charlesweahh@gmail.com",
         phone: "+1 510 367 1796",
-        password: "1346000",
+        password: "1346111",
         transferPin: "1234",
         emailNotif: true,
         smsNotif: false
